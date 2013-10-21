@@ -12,6 +12,7 @@ setup(
     install_requires=[
         'vr.common>=2.15.2',
         'redis>=2.6.2',
+        'requests>=1.0.4',
         'psutil',
         'PyYAML>=3.10',
     ],
