@@ -1,14 +1,14 @@
 #!/usr/bin/python
-from setuptools import setup, find_packages
+import setuptools
 
-setup(
+params = dict(
     name='vr.agent',
     namespace_packages=['vr'],
     version='0.3',
     author='Brent Tubbs',
     author_email='brent.tubbs@gmail.com',
     url='https://bitbucket.org/yougov/vr.agent',
-    packages=find_packages(),
+    packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=[
         'PyYAML>=3.10',
@@ -24,3 +24,5 @@ setup(
     },
     description='Velociraptor plugins to Supervisord.',
 )
+if __name__ == '__main__':
+    setuptools.setup(**params)
