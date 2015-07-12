@@ -7,6 +7,7 @@ setup(
     version='0.2',
     author='Brent Tubbs',
     author_email='brent.tubbs@gmail.com',
+    url='https://bitbucket.org/yougov/vr.agent',
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
