@@ -22,5 +22,5 @@ setup(
             'proc_publisher = vr.agent.publisher:main',
         ]
     },
-    description=('Velociraptor plugins to Supervisord.'),
+    description='Velociraptor plugins to Supervisord.',
 )
