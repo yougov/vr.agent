@@ -23,6 +23,8 @@ params = dict(
         ]
     },
     description='Velociraptor plugins to Supervisord.',
+    tests_require=['pytest'],
+    setup_requires=['pytest-runner'],
 )
 if __name__ == '__main__':
     setuptools.setup(**params)
