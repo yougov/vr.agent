@@ -20,11 +20,16 @@ params = dict(
     entry_points={
         'console_scripts': [
             'proc_publisher = vr.agent.publisher:main',
-        ]
+        ],
     },
     description='Velociraptor plugins to Supervisord.',
-    setup_requires=['pytest-runner'],
-    tests_require=['pytest', 'mock'],
+    setup_requires=[
+        'pytest-runner',
+    ],
+    tests_require=[
+        'pytest',
+        'mock',
+    ],
 )
 if __name__ == '__main__':
     setuptools.setup(**params)
