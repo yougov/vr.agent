@@ -1,6 +1,5 @@
 import json
-
-from mock import Mock, call
+from unittest.mock import Mock, call
 
 from vr.common.tests import FakeRPC
 from vr.common.models import Host, Proc

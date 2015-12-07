@@ -28,7 +28,7 @@ params = dict(
     ],
     tests_require=[
         'pytest',
-        'mock',
+        'backports.unittest_mock',
     ],
 )
 if __name__ == '__main__':
