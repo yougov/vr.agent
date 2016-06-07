@@ -4,7 +4,7 @@ import setuptools
 params = dict(
     name='vr.agent',
     namespace_packages=['vr'],
-    version='0.3',
+    version='0.4',
     author='Brent Tubbs',
     author_email='brent.tubbs@gmail.com',
     url='https://bitbucket.org/yougov/vr.agent',
