@@ -161,3 +161,6 @@ def log(*args):
         sys.stderr.write(str(s) + '\n')
     sys.stderr.flush()
 
+
+if __name__ == '__main__':
+    main()
