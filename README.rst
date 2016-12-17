@@ -5,8 +5,12 @@
 
 .. image:: https://img.shields.io/pypi/dm/vr.agent.svg
 
-.. image:: https://img.shields.io/travis/jaraco/vr.agent/master.svg
-   :target: http://travis-ci.org/jaraco/vr.agent
+.. image:: https://img.shields.io/travis/yougov/vr.agent/master.svg
+   :target: http://travis-ci.org/yougov/vr.agent
+
+
+vr.agent is a component of the `Velociraptor
+<https://github.com/yougov/velociraptor>`_ project.
 
 
 License
@@ -25,5 +29,3 @@ easily. If there's a documentation link above, it's probably
 stale because PyPI-based documentation is deprecated. This
 project may have documentation published at ReadTheDocs, but
 probably not. Good luck finding it.
-vr.agent is a component of the `Velociraptor
-<https://bitbucket.org/yougov/velociraptor>`_ project.
