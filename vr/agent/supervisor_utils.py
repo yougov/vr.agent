@@ -231,7 +231,7 @@ def notify(event):
             callback(event)
 
 
-class EventRejectedEvent: # purposely does not subclass Event 
+class EventRejectedEvent: # purposely does not subclass Event
     def __init__(self, process, event):
         self.process = process
         self.event = event
@@ -417,7 +417,7 @@ class PEventListenerDispatcher(PDispatcher):
             msg = '%s: BUSY -> ACKNOWLEDGED (rejected)' % procname
             process.listener_state = EventListenerStates.ACKNOWLEDGED
             notify(EventRejectedEvent(process, process.event))
-        except:
+        except Exception:
             msg = '%s: BUSY -> UNKNOWN' % procname
             process.listener_state = EventListenerStates.UNKNOWN
             notify(EventRejectedEvent(process, process.event))
