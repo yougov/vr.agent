@@ -1,5 +1,5 @@
 import json
-from unittest.mock import Mock, call
+from unittest import mock
 
 from vr.common.tests import FakeRPC
 from vr.common.models import Host, Proc
@@ -25,7 +25,7 @@ def get_tick():
 
 # tick events just update cache
 def test_ticks_get_fresh_data():
-    server = Mock()
+    server = mock.Mock()
     host = Host('somewhere', server)
     tick = get_tick()
     try:
@@ -34,14 +34,14 @@ def test_ticks_get_fresh_data():
         # TypeError: 'Mock' object is not iterable
         # This happens after the bit we're testing, so ignore it.
         pass
-    assert server.supervisor.mock_calls == [call.getAllProcessInfo()]
+    assert server.supervisor.mock_calls == [mock.call.getAllProcessInfo()]
 
 
 class MockContextManager(object):
     def __init__(self, *args, **kwargs):
         self.args = args
         self.kwargs = kwargs
-        self.mock = Mock()
+        self.mock = mock.Mock()
 
     def __enter__(self):
         return self.mock
@@ -53,7 +53,7 @@ class MockContextManager(object):
 def test_events_cache_all_procs():
     server = FakeRPC()
     host = Host('somewhere', server)
-    host.redis = Mock()
+    host.redis = mock.Mock()
     host.redis.pipeline.return_value = pipe = MockContextManager()
     host.redis.hkeys.return_value = []
     tick = get_tick()
@@ -67,14 +67,14 @@ def test_events_cache_all_procs():
         # Make sure the saved values are json dicts
         procdata = json.loads(hashdict[k])
         assert isinstance(procdata, dict)
-    assert calls[2] == call.expire('host_procs:somewhere', 600)
-    assert calls[3] == call.execute()
+    assert calls[2] == mock.call.expire('host_procs:somewhere', 600)
+    assert calls[3] == mock.call.execute()
 
 
 def test_procstate_events_published():
     server = FakeRPC()
     host = Host('somewhere', server)
-    host.redis = Mock()
+    host.redis = mock.Mock()
     host.redis.pipeline.return_value = MockContextManager()
     host.redis.hkeys.return_value = []
     epayload = (
@@ -107,7 +107,7 @@ def test_procstate_events_published():
 def test_removal_events_published():
     server = FakeRPC()
     host = Host('somewhere', server)
-    host.redis = Mock()
+    host.redis = mock.Mock()
     host.redis.pipeline.return_value = MockContextManager()
     host.redis.hkeys.return_value = []
     epayload = 'groupname:dummyproc'
@@ -135,7 +135,7 @@ def test_removal_events_published():
 def test_removals_include_id():
     server = FakeRPC()
     host = Host('somewhere', server)
-    host.redis = Mock()
+    host.redis = mock.Mock()
     host.redis.pipeline.return_value = MockContextManager()
     host.redis.hkeys.return_value = []
     epayload = 'groupname:dummyproc'
@@ -160,7 +160,7 @@ def test_removals_include_parsed_procname():
 
     server = FakeRPC()
     host = Host('somewhere', server)
-    host.redis = Mock()
+    host.redis = mock.Mock()
     host.redis.pipeline.return_value = MockContextManager()
     host.redis.hkeys.return_value = []
     epayload = 'groupname:node_example-v2-local-f96054b7-web-5003'
