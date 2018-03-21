@@ -3,20 +3,21 @@
 # Project skeleton maintained at https://github.com/jaraco/skeleton
 
 import io
-import sys
 
 import setuptools
 
 with io.open('README.rst', encoding='utf-8') as readme:
     long_description = readme.read()
 
-needs_wheel = {'release', 'bdist_wheel', 'dists'}.intersection(sys.argv)
-wheel = ['wheel'] if needs_wheel else []
-
 name = 'vr.agent'
 description = 'Velociraptor plugins to Supervisord.'
+nspkg_technique = 'managed'
+"""
+Does this package use "native" namespace packages or
+pkg_resources "managed" namespace packages?
+"""
 
-setup_params = dict(
+params = dict(
     name=name,
     use_scm_version=True,
     author="Brent Tubbs",
@@ -26,7 +27,11 @@ setup_params = dict(
     url="https://github.com/yougov/" + name,
     packages=setuptools.find_packages(),
     include_package_data=True,
-    namespace_packages=name.split('.')[:-1],
+    namespace_packages=(
+        name.split('.')[:-1] if nspkg_technique == 'managed'
+        else []
+    ),
+    python_requires='>=2.7',
     install_requires=[
         'PyYAML>=3.10',
         'redis>=2.6.2',
@@ -35,14 +40,33 @@ setup_params = dict(
         'vr.common>=2.15.2',
     ],
     extras_require={
+        'testing': [
+            # upstream
+            'pytest>=2.8',
+            'pytest-sugar>=0.9.1',
+            'collective.checkdocs',
+            'pytest-flake8',
+
+            # local
+            'backports.unittest_mock',
+        ],
+        'docs': [
+            # upstream
+            'sphinx',
+            'jaraco.packaging>=3.2',
+            'rst.linker>=1.9',
+
+            # local
+        ],
     },
     setup_requires=[
         'setuptools_scm>=1.15.0',
-    ] + wheel,
+    ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
     ],
     entry_points={
@@ -52,4 +76,4 @@ setup_params = dict(
     },
 )
 if __name__ == '__main__':
-    setuptools.setup(**setup_params)
+    setuptools.setup(**params)
