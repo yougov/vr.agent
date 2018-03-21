@@ -5,6 +5,7 @@ from vr.common.tests import FakeRPC
 from vr.common.models import Host, Proc
 from vr.agent import publisher
 
+
 def get_tick():
     """
     Create and return a faked "tick" event as would be emitted from Supervisor.
@@ -20,6 +21,7 @@ def get_tick():
         'len': str(len(epayload)),
     }
     return publisher.Event(eheaders, epayload, 'somewhere')
+
 
 # tick events just update cache
 def test_ticks_get_fresh_data():
@@ -40,10 +42,13 @@ class MockContextManager(object):
         self.args = args
         self.kwargs = kwargs
         self.mock = Mock()
+
     def __enter__(self):
         return self.mock
+
     def __exit__(self, *_):
         pass
+
 
 def test_events_cache_all_procs():
     server = FakeRPC()
@@ -72,7 +77,9 @@ def test_procstate_events_published():
     host.redis = Mock()
     host.redis.pipeline.return_value = MockContextManager()
     host.redis.hkeys.return_value = []
-    epayload = 'processname:dummyproc groupname:dummyproc from_state:STOPPED tries:0'
+    epayload = (
+        'processname:dummyproc groupname:dummyproc from_state:STOPPED tries:0'
+    )
     eheaders = {
         'ver': '3.0',
         'server': 'supervisor',
@@ -88,8 +95,10 @@ def test_procstate_events_published():
     _, args, kwargs = host.redis.publish.mock_calls[0]
     assert args[0] == 'fake_channel'
 
-    expected_data = Proc(host,
-                         dict(host.supervisor.process_info['dummyproc'])).as_dict()
+    expected_data = Proc(
+        host,
+        dict(host.supervisor.process_info['dummyproc'])
+    ).as_dict()
     expected_data['event'] = 'PROCESS_STATE_RUNNING'
     published_data = json.loads(args[1])
     assert expected_data == published_data
@@ -145,6 +154,7 @@ def test_removals_include_id():
     _, args, kwargs = host.redis.publish.mock_calls[0]
     parsed = json.loads(args[1])
     assert parsed['id'] == 'somewhere-dummyproc'
+
 
 def test_removals_include_parsed_procname():
 

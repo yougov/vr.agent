@@ -37,7 +37,7 @@ from vr.agent import supervisor_utils
 
 
 def main():
-    if not 'SUPERVISOR_SERVER_URL' in os.environ:
+    if 'SUPERVISOR_SERVER_URL' not in os.environ:
         raise SystemExit('supervisor_events_publisher must be run as a '
                          'supervisor event listener')
 
@@ -95,8 +95,8 @@ class Event(object):
 
         # Parse out some useful bits
         self.eventname = headers['eventname']
-        self.payload_headers, self.payload_data = supervisor_utils.eventdata(payload
-                                                                       + '\n')
+        self.payload_headers, self.payload_data = supervisor_utils.eventdata(
+            payload + '\n')
         if 'when' in self.payload_headers:
             utime = float(self.payload_headers['when'])
             self.time = datetime.datetime.utcfromtimestamp(utime)
@@ -137,7 +137,6 @@ class EventStream(object):
         # self.next() call.
         self._needs_ok = False
 
-
     def __iter__(self):
         while 1:
             yield self.next()
@@ -146,7 +145,8 @@ class EventStream(object):
         if self._needs_ok:
             supervisor_utils.listener.ok(self.stdout)
 
-        headers, payload = supervisor_utils.listener.wait(self.stdin, self.stdout)
+        headers, payload = supervisor_utils.listener.wait(
+            self.stdin, self.stdout)
         self._needs_ok = True
         return Event(headers, payload, self.hostname)
 

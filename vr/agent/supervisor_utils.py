@@ -25,7 +25,8 @@ class SupervisorTransport(xmlrpclib.Transport):
     """
     connection = None
 
-    _use_datetime = 0 # python 2.5 fwd compatibility
+    _use_datetime = 0  # python 2.5 fwd compatibility
+
     def __init__(self, username=None, password=None, serverurl=None):
         self.username = username
         self.password = password
@@ -39,6 +40,7 @@ class SupervisorTransport(xmlrpclib.Transport):
                 port = 80
             else:
                 port = int(port)
+
             def get_connection(host=host, port=port):
                 return httplib.HTTPConnection(host, port)
             self._get_connection = get_connection
@@ -57,10 +59,10 @@ class SupervisorTransport(xmlrpclib.Transport):
         if not self.connection:
             self.connection = self._get_connection()
             self.headers = {
-                "User-Agent" : self.user_agent,
-                "Content-Type" : "text/xml",
+                "User-Agent": self.user_agent,
+                "Content-Type": "text/xml",
                 "Accept": "text/xml"
-                }
+            }
 
             # basic auth
             if self.username is not None and self.password is not None:
@@ -78,10 +80,12 @@ class SupervisorTransport(xmlrpclib.Transport):
         if r.status != 200:
             self.connection.close()
             self.connection = None
-            raise xmlrpclib.ProtocolError(host + handler,
-                                          r.status,
-                                          r.reason,
-                                          '' )
+            raise xmlrpclib.ProtocolError(
+                host + handler,
+                r.status,
+                r.reason,
+                '',
+            )
         data = r.read()
         p, u = self.getparser()
         p.feed(data)
@@ -103,7 +107,7 @@ def getRPCInterface(env):
 
 
 def get_headers(line):
-    return dict([ x.split(':') for x in line.split() ])
+    return dict([x.split(':') for x in line.split()])
 
 
 def eventdata(payload):
@@ -111,16 +115,17 @@ def eventdata(payload):
     headers = get_headers(headerinfo)
     return headers, data
 
+
 def compact_traceback():
     t, v, tb = sys.exc_info()
     tbinfo = []
-    assert tb # Must have a traceback
+    assert tb  # Must have a traceback
     while tb:
         tbinfo.append((
             tb.tb_frame.f_code.co_filename,
             tb.tb_frame.f_code.co_name,
             str(tb.tb_lineno)
-            ))
+        ))
         tb = tb.tb_next
 
     # just to be safe
@@ -135,7 +140,7 @@ class PDispatcher:
     """ Asyncore dispatcher for mainloop, representing a process channel
     (stdin, stdout, or stderr).  This class is abstract. """
 
-    closed = False # True if close() has been called
+    closed = False  # True if close() has been called
 
     def __repr__(self):
         return '<%s at %s for %s (%s)>' % (self.__class__.__name__,
@@ -163,9 +168,9 @@ class PDispatcher:
                 repr(self),
                 t,
                 v,
-                tbinfo
-                )
+                tbinfo,
             )
+        )
         self.close()
 
     def close(self):
@@ -179,14 +184,15 @@ class PDispatcher:
 
 
 class EventListenerStates:
-    READY = 10 # the process ready to be sent an event from supervisor
-    BUSY = 20 # event listener is processing an event sent to it by supervisor
-    ACKNOWLEDGED = 30 # the event listener processed an event
-    UNKNOWN = 40 # the event listener is in an unknown state
+    READY = 10  # the process ready to be sent an event from supervisor
+    BUSY = 20  # event listener is processing an event sent to it by supervisor
+    ACKNOWLEDGED = 30  # the event listener processed an event
+    UNKNOWN = 40  # the event listener is in an unknown state
+
 
 class LevelsByName:
     CRIT = 50   # messages that probably require immediate user attention
-    ERRO = 40   # messages that indicate a potentially ignorable error condition
+    ERRO = 40  # messages that indicate a potentially ignorable error condition
     WARN = 30   # messages that indicate issues which aren't errors
     INFO = 20   # normal informational output
     DEBG = 10   # messages useful for users trying to debug configurations
@@ -231,7 +237,7 @@ def notify(event):
             callback(event)
 
 
-class EventRejectedEvent: # purposely does not subclass Event
+class EventRejectedEvent:  # purposely does not subclass Event
     def __init__(self, process, event):
         self.process = process
         self.event = event
@@ -240,9 +246,9 @@ class EventRejectedEvent: # purposely does not subclass Event
 class PEventListenerDispatcher(PDispatcher):
     """ An output dispatcher that monitors and changes a process'
     listener_state """
-    process = None # process which "owns" this dispatcher
-    channel = None # 'stderr' or 'stdout'
-    childlog = None # the logger
+    process = None  # process which "owns" this dispatcher
+    channel = None  # 'stderr' or 'stdout'
+    childlog = None  # the logger
     state_buffer = ''  # data waiting to be reviewed for state changes
 
     READY_FOR_EVENTS_TOKEN = 'READY\n'
@@ -270,7 +276,7 @@ class PEventListenerDispatcher(PDispatcher):
                 logfile,
                 LevelsByName.INFO,
                 '%(message)s',
-                rotating=not not maxbytes, # optimization
+                rotating=not not maxbytes,  # optimization
                 maxbytes=maxbytes,
                 backups=backups)
 
@@ -284,7 +290,6 @@ class PEventListenerDispatcher(PDispatcher):
         if self.childlog is not None:
             for handler in self.childlog.handlers:
                 handler.reopen()
-
 
     def writable(self):
         return False
@@ -371,7 +376,7 @@ class PEventListenerDispatcher(PDispatcher):
                     return
 
                 result_line = self.state_buffer[:pos]
-                self.state_buffer = self.state_buffer[pos+1:] # rid LF
+                self.state_buffer = self.state_buffer[pos + 1:]  # rid LF
                 resultlen = result_line[self.RESULT_TOKEN_START_LEN:]
                 try:
                     self.resultlen = int(resultlen)
@@ -425,7 +430,6 @@ class PEventListenerDispatcher(PDispatcher):
         process.config.options.logger.debug(msg)
 
 
-
 class EventListenerProtocol:
     def wait(self, stdin=sys.stdin, stdout=sys.stdout):
         self.ready(stdout)
@@ -452,8 +456,10 @@ class EventListenerProtocol:
         stdout.write(result)
         stdout.flush()
 
+
 class RejectEvent(Exception):
     """ The exception type expected by a dispatcher when a handler wants
     to reject an event """
+
 
 listener = EventListenerProtocol()
