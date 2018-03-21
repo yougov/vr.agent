@@ -10,9 +10,29 @@ supervisor.rpcinterface_factory = vr.agent.rpc:make_interface
 """
 import os
 
+from six.moves import xmlrpc_client
+
 import posixpath
 import yaml
 from supervisor.rpcinterface import SupervisorNamespaceRPCInterface
+import supervisor.xmlrpc
+
+
+def xmlrpc_marshal(value):
+    ismethodresponse = not isinstance(value, xmlrpc_client.Fault)
+    if ismethodresponse:
+        if not isinstance(value, tuple):
+            value = (value,)
+        body = xmlrpc_client.dumps(
+            value, methodresponse=ismethodresponse,
+            allow_none=True)
+    else:
+        body = xmlrpc_client.dumps(value, allow_none=True)
+    return body
+
+
+# monkeypatch supervisor XML-RPC code to permit None values in responses
+supervisor.xmlrpc.xmlrpc_marshal = xmlrpc_marshal
 
 
 def make_interface(supervisord, **config):

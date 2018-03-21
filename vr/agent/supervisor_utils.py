@@ -3,23 +3,24 @@ Code adapted from supervisor.childutils and supervisor.xmlrpc so we don't have
 to include all of Supervisor as a dependency for this library.
 """
 import sys
-import xmlrpclib
-import urllib
-import httplib
 import socket
 
+from six.moves import xmlrpc_client
+from six.moves import urllib
+from six.moves import http_client
 
-class UnixStreamHTTPConnection(httplib.HTTPConnection):
+
+class UnixStreamHTTPConnection(http_client.HTTPConnection):
     def connect(self):
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         # we abuse the host parameter as the socketname
         self.sock.connect(self.socketfile)
 
 
-class SupervisorTransport(xmlrpclib.Transport):
+class SupervisorTransport(xmlrpc_client.Transport):
     """
-    Provides a Transport for xmlrpclib that uses
-    httplib.HTTPConnection in order to support persistent
+    Provides a Transport for xmlrpc.client that uses
+    http_client.HTTPConnection in order to support persistent
     connections.  Also support basic auth and UNIX domain socket
     servers.
     """
@@ -33,16 +34,16 @@ class SupervisorTransport(xmlrpclib.Transport):
         self.verbose = False
         self.serverurl = serverurl
         if serverurl.startswith('http://'):
-            type, uri = urllib.splittype(serverurl)
-            host, path = urllib.splithost(uri)
-            host, port = urllib.splitport(host)
+            type, uri = urllib.parse.splittype(serverurl)
+            host, path = urllib.parse.splithost(uri)
+            host, port = urllib.parse.splitport(host)
             if port is None:
                 port = 80
             else:
                 port = int(port)
 
             def get_connection(host=host, port=port):
-                return httplib.HTTPConnection(host, port)
+                return http_client.HTTPConnection(host, port)
             self._get_connection = get_connection
         elif serverurl.startswith('unix://'):
             def get_connection(serverurl=serverurl):
@@ -80,7 +81,7 @@ class SupervisorTransport(xmlrpclib.Transport):
         if r.status != 200:
             self.connection.close()
             self.connection = None
-            raise xmlrpclib.ProtocolError(
+            raise xmlrpc_client.ProtocolError(
                 host + handler,
                 r.status,
                 r.reason,
@@ -103,7 +104,7 @@ def getRPCInterface(env):
     # dumbass ServerProxy won't allow us to pass in a non-HTTP url,
     # so we fake the url we pass into it and always use the transport's
     # 'serverurl' to figure out what to attach to
-    return xmlrpclib.ServerProxy('http://127.0.0.1', getRPCTransport(env))
+    return xmlrpc_client.ServerProxy('http://127.0.0.1', getRPCTransport(env))
 
 
 def get_headers(line):

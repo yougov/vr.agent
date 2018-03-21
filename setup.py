@@ -36,7 +36,7 @@ params = dict(
         'PyYAML>=3.10',
         'redis>=2.6.2',
         'requests>=1.0.4',
-        'supervisor',
+        'supervisor; python_version=="2.7"',
         'vr.common>=2.15.2',
     ],
     extras_require={
