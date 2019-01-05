@@ -1,3 +1,8 @@
+1.1
+===
+
+Pin dependencies for namespace compatibility.
+
 1.0
 ===
 
