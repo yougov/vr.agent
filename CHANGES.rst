@@ -1,3 +1,8 @@
+2.0.0
+=====
+
+Switch to pkgutil namespace package technique.
+
 1.1
 ===
 
