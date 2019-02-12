@@ -2,3 +2,5 @@
 .eggs/
 *.egg-info/
 TAGS
+/pip-wheel-metadata
+/.tox
