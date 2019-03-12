@@ -47,7 +47,7 @@ def main():
     rcon = redis.StrictRedis.from_url(os.environ['REDIS_URL'])
     hostname = os.getenv('HOSTNAME', socket.getfqdn())
     log('proc_publisher starting with hostname %s' % hostname)
-    log('connecting to redis at %s' % os.environ['REDIS_URL'])
+    log('connecting to Redis')
     host = Host(hostname, rpc_or_port=rpc, redis_or_url=rcon,)
 
     for e in EventStream(hostname):
